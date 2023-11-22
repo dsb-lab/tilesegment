@@ -131,3 +131,32 @@ def kdeplot_log(x, y, **kwargs):
     :return: matplotlib.collections.PathCollection object
     """
     return sns.kdeplot(np.log(x), np.log(y), **kwargs)
+
+
+def increase_point_resolution(outline, min_outline_length):
+    rounds = np.ceil(np.log2(min_outline_length / len(outline))).astype("int16")
+    if rounds <= 0:
+        newoutline_new = np.copy(outline)
+    for r in range(rounds):
+        if r == 0:
+            pre_outline = np.copy(outline)
+        else:
+            pre_outline = np.copy(newoutline_new)
+        newoutline_new = np.copy(pre_outline)
+        i = 0
+        while i < len(pre_outline) * 2 - 2:
+            newpoint = np.array(
+                [
+                    np.rint((newoutline_new[i] + newoutline_new[i + 1]) / 2).astype(
+                        "uint16"
+                    )
+                ]
+            )
+            newoutline_new = np.insert(newoutline_new, i + 1, newpoint, axis=0)
+            i += 2
+        newpoint = np.array(
+            [np.rint((pre_outline[-1] + pre_outline[0]) / 2).astype("uint16")]
+        )
+        newoutline_new = np.insert(newoutline_new, 0, newpoint, axis=0)
+
+    return newoutline_new

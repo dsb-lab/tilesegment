@@ -104,6 +104,7 @@ def tile_segment(IMG_padded, model, tile_info, pad_info, xyres, diam_th, verbose
     centers = []
     masks = []
     diameters = []
+    outlines = []
     tiles_left = tile_info.N
 
     for i in range(tile_info.n):
@@ -113,9 +114,9 @@ def tile_segment(IMG_padded, model, tile_info, pad_info, xyres, diam_th, verbose
             img = IMG_padded[idsi, idsj]
             
             labs, _ = model.predict_instances(normalize(img))
-            outlines, _masks, _labs = get_outlines_masks_labels(labs) 
+            tile_outlines, _masks, _labs = get_outlines_masks_labels(labs) 
             for l, lab in enumerate(_labs):
-                outline = outlines[l]
+                outline = tile_outlines[l]
                 mask = _masks[l]
                 diam = rotating_calipers(outline)
                 center = np.mean(mask, axis=0)
@@ -129,6 +130,7 @@ def tile_segment(IMG_padded, model, tile_info, pad_info, xyres, diam_th, verbose
                     offset = np.array([i*tile_info.Ts-tile_info.O-pad_info.top_ishdiff, j*tile_info.Ts-tile_info.O-pad_info.lef_jshdiff])
                     centers.append(center+offset)
                     masks.append(mask+offset)
+                    outlines.append(outline+offset)
                     diameters.append(diam)
 
             labs += maxlab
@@ -138,4 +140,4 @@ def tile_segment(IMG_padded, model, tile_info, pad_info, xyres, diam_th, verbose
             labels[idsi, idsj] += labs
             tiles_left -=1
             if verbose: print("tiles left =", tiles_left)
-    return centers, masks, diameters
+    return centers, outlines, masks, diameters
