@@ -7,7 +7,7 @@ Segmentation relies on Stardist (https://github.com/stardist/stardist). Examples
 * `fluo_quantification_and_thresholding.ipynb` is an example of quantification of the fluorescence inside the segmented nuclei using the overlap and thresholding obtained with the other two scripts. 
 
 ## Installation
-`$ python -m pip install 'tilesegment @ git+https://github.com/PabloCasaniGaldon/tilesegment'`
+`$ python -m pip install 'tilesegment @ git+https://github.com/dsb-lab/tilesegment'`
 
 ## Usage
 
